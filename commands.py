@@ -1,6 +1,64 @@
-def importFolder(folderName: str):
-    # TODO: implement this
-    pass
+import csv
+from mysql_helpers import *
+from constants import TABLES
+import glob
+
+"""
+    main function for import command
+"""
+def importFromFolder(**kwargs):
+    folderName = kwargs['folderName']
+    print("Dropping tables...")
+    for table, types in reversed(list(TABLES.items())):
+        if not drop(table):
+            print(f"Error dropping table: {table}")
+            return False
+    print("Successfully dropped tables!")
+    
+    print("Creating tables...")
+    for table, types in TABLES.items():
+        if not create_table(table, table_def=types):
+            print(f"Error creating table {table}")
+            return False
+    print("Successfully created tables!")
+    
+    
+    print(f"Importing from folder {folderName}")
+    # Define the correct dependency order for importing CSV files
+    # Tables must be imported in order to satisfy foreign key constraints
+    import_order = [
+        "User",                    
+        "AgentCreator",            
+        "AgentClient",             
+        "InternetService",         
+        "BaseModel",               
+        "LLMService",              
+        "DataStorage",             
+        "ModelServices",           
+        "CustomizedModel",         
+        "Configuration",           
+        "ModelConfigurations",     
+    ]
+    
+    # Process CSV files in dependency order
+    for table_name in import_order:
+        csv_file = f"{folderName}/{table_name}.csv"
+        try:
+            with open(csv_file, 'r') as f:
+                csv_reader = csv.reader(f)
+                columns = None
+                for i, row in enumerate(csv_reader):
+                    if i == 0:
+                        columns = row
+                    else:
+                        if not insert(table_name, tuple(columns), tuple(row)):
+                            raise Exception(f"Error inserting row into table {table_name}: {row}")
+        except FileNotFoundError:
+            # Skip if CSV file doesn't exist (optional tables)
+            print("Missing file: " + table_name)
+            return False
+    
+    return True
 
 def insertAgentClient(**kwargs):
     # TODO: implement this
@@ -52,3 +110,15 @@ def printNL2SQLresult(**kwargs):
     # TODO: implement this
     # OPTIONAL
     pass
+
+COMMANDS = {
+    "import" : importFromFolder,
+    "insertAgentClient" : insertAgentClient,
+    "addCustomizedModel" : addCustomizedModel,
+    "deleteBaseModel" : deleteBaseModel,
+    "listInternetService" : listInternetService,
+    "countCustomizedModel" : countCustomizedModel,
+    "topNDurationConfig" : topNDurationConfig,
+    "listBaseModelKeyWord" : listBaseModelKeyWord,
+    "printNL2SQLresult" : printNL2SQLresult,
+}

@@ -2,29 +2,16 @@
 # requirements
 # must contain test_data_project_122a to test folders
 #       you can find it in the doc
-import mysql_helper as db
 import sys                              # important for parsing arguments
 from args import get_args
-def dummy():
-    pass
+from commands import COMMANDS
 
-
-# commands that we have to fill
-# any command that has the function "dummy" is not implemented yet
-COMMANDS = {
-    "import"                : dummy,
-    "insertAgentClient"     : dummy,
-    "addCustomizedModel"    : dummy,
-    "deleteBaseModel"       : dummy,
-    "listInternetService"   : dummy,
-    "countCustomizedModel"  : dummy,
-    "topNDurationConfig"    : dummy,
-    "listBaseModelKeyWord"  : dummy,
-    
-    # experiment/extra credit?
-    "printNL2SQLresult"     : dummy,
-}
     
 if __name__ == "__main__":
-    parser = get_args()
-    args = parser.parse_args()
+    args = get_args()
+    if args["command"] in COMMANDS:
+        result = COMMANDS[args["command"]](**args)
+    else:
+        raise Exception(f"Unknown command {args.command}")
+        
+    

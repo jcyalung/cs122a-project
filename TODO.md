@@ -2,7 +2,7 @@
 
 ## Required Functions
 
-- [ ] `import` - Import data functionality
+- [x] `import` - Import data functionality
 - [ ] `insertAgentClient` - Insert agent/client data
 - [ ] `addCustomizedModel` - Add a customized model
 - [ ] `deleteBaseModel` - Delete a base model

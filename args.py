@@ -14,6 +14,9 @@ def config() -> ArgumentParser:
         for arg in COMMAND_ARGS[name]:
             current.add_argument(arg.name, type=arg.type, help=arg.help)
 
-def get_args() -> ArgumentParser:
+def get_args():
     config()
-    return parser
+    args = parser.parse_args()
+    if args.command == None:
+        parser.print_help()
+    return vars(args)
