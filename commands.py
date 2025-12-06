@@ -60,8 +60,10 @@ def importFromFolder(**kwargs):
     
     return True
 
+"""
+    main function for inserting an agent client
+"""
 def insertAgentClient(**kwargs):
-    # TODO: implement this
     uid = kwargs['uid']
     username = kwargs['username']
     email = kwargs['email']
@@ -71,13 +73,35 @@ def insertAgentClient(**kwargs):
     cvv = kwargs['cvv']
     zip = kwargs['zip']
     interests = kwargs['interests']
-    pass
+    TABLE = "AgentClient"
+    # insert into user table (for foreign key)
+    user_columns = ('uid', 'email', 'username')
+    user_values = (uid, email, username)
+    if not insert("User", user_columns, user_values):
+        print(f"Failed to insert into User")
+        return False
+    
+    agent_client_columns = ('uid', 'interests', 'cardholder', 'expire', 'cardno', 'cvv', 'zip')
+    agent_client_values = (uid, interests, card_holder, expiration_date, card_number, cvv, zip)
+    
+    if insert(TABLE, agent_client_columns, agent_client_values):
+        return True
+    else:
+        print(f"Failed to insert into {TABLE}")
+        return False
 
 def addCustomizedModel(**kwargs):
     # TODO: implement this
     mid = kwargs['mid']
     bmid = kwargs['bmid']
-    pass
+    
+    customized_model_columns = ('bmid','mid')
+    customized_model_values = (bmid, mid)
+    TABLE = "CustomizedModel"
+    if insert(TABLE, customized_model_columns, customized_model_values):
+        return True
+    else:
+        print(f"Failed to insert into {TABLE}")
 
 def deleteBaseModel(**kwargs):
     # TODO: implement this

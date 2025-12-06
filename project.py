@@ -11,7 +11,9 @@ if __name__ == "__main__":
     args = get_args()
     if args["command"] in COMMANDS:
         result = COMMANDS[args["command"]](**args)
+        if result:
+            print("Success")
+        else:
+            print("Fail")
     else:
         raise Exception(f"Unknown command {args.command}")
-        
-    

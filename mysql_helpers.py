@@ -8,40 +8,40 @@ DB = mysql.connector.connect(
 )
 
 # insert a row into a given table
-def insert(tableName : str, columns : tuple[str], values : tuple[str]) -> bool:
+def insert(table_name : str, columns : tuple[str], values : tuple[str]) -> bool:
     cursor = DB.cursor()
     try:
         placeholders = ", ".join(["%s"] * len(values))
         columns_str = ", ".join([f"`{col}`" for col in columns])
-        sql = f"INSERT INTO `{tableName}` ({columns_str}) VALUES ({placeholders})"
+        sql = f"INSERT INTO `{table_name}` ({columns_str}) VALUES ({placeholders})"
         cursor.execute(sql, values)
         DB.commit()
         return True
     except Exception as e:
-        print(f"Error inserting into {tableName}: {e}")
+        print(f"Error inserting into {table_name}: {e}")
         return False
     
 
 # drop the table if exists
-def drop(tableName : str) -> bool:
+def drop(table_name : str) -> bool:
     cursor = DB.cursor()
     try:
-        sql = f"DROP TABLE IF EXISTS {tableName}"
+        sql = f"DROP TABLE IF EXISTS {table_name}"
         cursor.execute(sql)
         DB.commit()
         return True
     except Exception as e:
-        print(f"Error dropping table {tableName}: {e}")
+        print(f"Error dropping table {table_name}: {e}")
         return False
 
-def create_table(tableName : str, table_def) -> bool:
+# create table with definition
+def create_table(table_name : str, table_def) -> bool:
     try:
         cursor = DB.cursor()
-        # Join the list of column definitions with commas
         table_def_str = ", ".join(table_def)
-        sql = f"CREATE TABLE IF NOT EXISTS `{tableName}` ({table_def_str})"
+        sql = f"CREATE TABLE IF NOT EXISTS `{table_name}` ({table_def_str})"
         cursor.execute(sql)
         DB.commit()
         return True
     except Exception as e:
-        print(f"Error creating table {tableName}: {e}")
+        print(f"Error creating table {table_name}: {e}")

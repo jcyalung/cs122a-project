@@ -3,7 +3,7 @@
 ## Required Functions
 
 - [x] `import` - Import data functionality
-- [ ] `insertAgentClient` - Insert agent/client data
+- [x] `insertAgentClient` - Insert agent/client data
 - [ ] `addCustomizedModel` - Add a customized model
 - [ ] `deleteBaseModel` - Delete a base model
 - [ ] `listInternetService` - List internet service information
