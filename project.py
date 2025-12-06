@@ -4,7 +4,7 @@
 #       you can find it in the doc
 import mysql_helper as db
 import sys                              # important for parsing arguments
-
+from args import get_args
 def dummy():
     pass
 
@@ -24,7 +24,7 @@ COMMANDS = {
     # experiment/extra credit?
     "printNL2SQLresult"     : dummy,
 }
-
+    
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        print(sys.argv)
+    parser = get_args()
+    args = parser.parse_args()

@@ -7,8 +7,6 @@ DB = mysql.connector.connect(
     database="cs122a"
 )
 
-cursor = DB.cursor()
-cursor.execute("CREATE DATABASE IF NOT EXISTS cs122a-project")
 
 def insert(table : str, columns : tuple[str], values : tuple[str]):
     cursor = DB.cursor()
