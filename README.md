@@ -1,3 +1,8 @@
+# cs122a-project
+Project for CS 122A, taught by Faisal Nawab. <br>
+Authored by Joshua Yalung, Jerrick Aguilar, and Arvin Limjoco.
+
+
 ## Regulations and Assumptions 
 
 ### [Project Description](https://docs.google.com/document/d/12abTFE48Og_o3m5Oh16NBYvLzybPCEJQoeuerxMw03k/edit?tab=t.0)
