@@ -1,5 +1,8 @@
 ## Regulations and Assumptions 
 
+### [Project Description](https://docs.google.com/document/d/12abTFE48Og_o3m5Oh16NBYvLzybPCEJQoeuerxMw03k/edit?tab=t.0)
+
+### [Test Dataset](https://drive.google.com/file/d/1G_wWXdNKswV0gWflR0--64mfc2D8x2ZI/view?usp=sharing)
 1. You can have any number of Python files, but the entry/main file must be named `project.py`.
 2. The command to run the program will be:
 
