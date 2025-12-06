@@ -2,7 +2,14 @@
 Project for CS 122A, taught by Faisal Nawab. <br>
 Authored by Joshua Yalung, Jerrick Aguilar, and Arvin Limjoco.
 
+## Prerequisites
+Run `hw0.sql` by running:
 
+```mysql
+mysql> source hw0.sql
+```
+
+This will initialize the database `cs122a` which is what we will be using. Without initialization, the file `mysql_helper.py` will throw an error.
 ## Regulations and Assumptions 
 
 ### [Project Description](https://docs.google.com/document/d/12abTFE48Og_o3m5Oh16NBYvLzybPCEJQoeuerxMw03k/edit?tab=t.0)
@@ -24,3 +31,4 @@ Strings that contain spaces will be wrapped in quotation marks when calling the 
 8. **If the output is boolean**, print “Success” or “Fail”.
 9. **If the output is a result table**, print each record in one line and separate columns with ‘,’ - just like the format of the dataset file. 
 10. You must use **Python 3**. The standard Python libraries and mysql-connector-python will be installed in the autograder — other third-party packages are not allowed.
+

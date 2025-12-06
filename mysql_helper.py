@@ -1,13 +1,14 @@
 import mysql.connector
 
-try:
-    DB = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="password"
-    )
-except Exception as e:
-    raise e
+DB = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="password",
+    database="cs122a"
+)
+
+cursor = DB.cursor()
+cursor.execute("CREATE DATABASE IF NOT EXISTS cs122a-project")
 
 def insert(table : str, columns : tuple[str], values : tuple[str]):
-    pass
+    cursor = DB.cursor()
