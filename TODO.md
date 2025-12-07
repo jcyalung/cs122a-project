@@ -10,7 +10,4 @@
 - [ ] `countCustomizedModel` - Count customized models
 - [ ] `topNDurationConfig` - Get top N duration configurations
 - [ ] `listBaseModelKeyWord` - List base models by keyword
-
-## Extra Credit / Experimental
-
-- [ ] `printNL2SQLresult` - Print Natural Language to SQL result
+- [x] `printNL2SQLresult` - Print Natural Language to SQL result

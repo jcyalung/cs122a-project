@@ -1,8 +1,7 @@
 import csv
 from mysql_helpers import *
 from constants import TABLES
-import glob
-
+import csv
 """
     main function for import command
 """
@@ -131,9 +130,48 @@ def listBaseModelKeyWord(**kwargs):
     pass
 
 def printNL2SQLresult(**kwargs):
-    # TODO: implement this
-    # OPTIONAL
-    pass
+    filename = "NL2SQL_results.csv"
+    # Define the order and names of the columns as in the problem description
+    header_fields = [
+        "NLquery_id",
+        "NLquery",
+        "LLM_model_name",
+        "prompt",
+        "LLM_returned_SQL_id",
+        "LLM_returned_SQL_query",
+        "SQL_correct",
+        "SyntaxError",
+        "OutputError",
+        "TableError"
+    ]
+    try:
+        with open(filename, newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            print(",".join(header_fields))
+            for row in reader:
+                output_values = []
+                nlquery_id = row.get("NLquery_id","")
+                output_values.append(str(nlquery_id) if nlquery_id is not None else "")
+
+                output_values.append(row.get("NLquery", "") if row.get("NLquery", "") is not None else "")
+                output_values.append(row.get("LLM_model_name", "") if row.get("LLM_model_name", "") is not None else "")
+                output_values.append(row.get("prompt", "") if row.get("prompt", "") is not None else "")
+
+                llm_sql_id = row.get("LLM_returned_SQL_id","")
+                output_values.append(str(llm_sql_id) if llm_sql_id is not None else "")
+
+                output_values.append(row.get("LLM_returned_SQL_query", "") if row.get("LLM_returned_SQL_query", "") is not None else "")
+
+                sql_correct_val = row.get("SQL_correct", "")
+                output_values.append(sql_correct_val.lower() if sql_correct_val != "" else "")
+                for errname in ["SyntaxError", "OutputError", "TableError"]:
+                    err_val = row.get(errname, "")
+                    output_values.append(err_val.lower() if err_val != "" else "")
+                print(",".join(output_values))
+        return True
+    except FileNotFoundError:
+        print(f"File {filename} not found.")
+        return False
 
 COMMANDS = {
     "import" : importFromFolder,
