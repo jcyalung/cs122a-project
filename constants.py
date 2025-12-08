@@ -33,10 +33,11 @@ COMMAND_DESCRIPTIONS = {
 
 
 class Argument():
-    def __init__(self, name : str, type : type, help : str) -> None:
+    def __init__(self, name : str, type : type, help : str, nargs = 1) -> None:
         self.name = name
         self.type = type
         self.help = help
+        self.nargs = nargs
         
 # handles the arguments of commands, type -h to help
 COMMAND_ARGS = {
@@ -65,9 +66,7 @@ COMMAND_ARGS = {
         Argument('bmid', int, 'bmid of model to list'),
     ],
     "countCustomizedModel"  : [
-        Argument('bmid1', int, 'bmid1 of list'),
-        Argument('bmid2', int, 'bmid2 of list'),
-        Argument('bmid3', int, 'bmid3 of list'),
+        Argument('bmids', int, 'list of bmids (3 required)', nargs=3),
     ],
     "topNDurationConfig"    : [
         Argument('uid', int, 'uid of agent client'),
@@ -162,3 +161,30 @@ TABLES = {
     ]
 }
 
+def get_internet_services_for_model(bmid):
+    """
+    Given a base model id, list all the internet services that the model is utilizing,
+    sorted by provider's name in ascending order.
+
+    Args:
+        bmid (int): The base model id.
+
+    Returns:
+        list of dict: Each dict contains 'sid', 'provider', and 'endpoints' for an InternetService.
+    """
+    from mysql_helpers import DB
+    cursor = DB.cursor(dictionary=True)
+    sql = """
+        SELECT isrv.sid, isrv.provider, isrv.endpoints
+        FROM ModelServices ms
+        JOIN InternetService isrv ON ms.sid = isrv.sid
+        WHERE ms.bmid = %s
+        ORDER BY isrv.provider ASC
+    """
+    try:
+        cursor.execute(sql, (bmid,))
+        services = cursor.fetchall()
+        return services
+    except Exception as e:
+        print(f"Error retrieving internet services for bmid={bmid}: {e}")
+        return []

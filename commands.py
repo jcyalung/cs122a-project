@@ -7,24 +7,16 @@ import csv
 """
 def importFromFolder(**kwargs):
     folderName = kwargs['folderName']
-    print("Dropping tables...")
     for table, types in reversed(list(TABLES.items())):
         if not drop(table):
-            print(f"Error dropping table: {table}")
             return False
-    print("Successfully dropped tables!")
     
-    print("Creating tables...")
     for table, types in TABLES.items():
         if not create_table(table, table_def=types):
             print(f"Error creating table {table}")
             return False
-    print("Successfully created tables!")
     
     
-    print(f"Importing from folder {folderName}")
-    # Define the correct dependency order for importing CSV files
-    # Tables must be imported in order to satisfy foreign key constraints
     import_order = [
         "User",                    
         "AgentCreator",            
@@ -39,7 +31,6 @@ def importFromFolder(**kwargs):
         "ModelConfigurations",     
     ]
     
-    # Process CSV files in dependency order
     for table_name in import_order:
         csv_file = f"{folderName}/{table_name}.csv"
         try:
@@ -53,8 +44,6 @@ def importFromFolder(**kwargs):
                         if not insert(table_name, tuple(columns), tuple(row)):
                             raise Exception(f"Error inserting row into table {table_name}: {row}")
         except FileNotFoundError:
-            # Skip if CSV file doesn't exist (optional tables)
-            print("Missing file: " + table_name)
             return False
     
     return True
@@ -77,52 +66,128 @@ def insertAgentClient(**kwargs):
     user_columns = ('uid', 'email', 'username')
     user_values = (uid, email, username)
     if not insert("User", user_columns, user_values):
-        print(f"Failed to insert into User")
         return False
     
     agent_client_columns = ('uid', 'interests', 'cardholder', 'expire', 'cardno', 'cvv', 'zip')
     agent_client_values = (uid, interests, card_holder, expiration_date, card_number, cvv, zip)
     
-    if insert(TABLE, agent_client_columns, agent_client_values):
-        return True
-    else:
-        print(f"Failed to insert into {TABLE}")
-        return False
+    return insert(TABLE, agent_client_columns, agent_client_values)
 
 def addCustomizedModel(**kwargs):
-    # TODO: implement this
     mid = kwargs['mid']
     bmid = kwargs['bmid']
+    
+    # Check if bmid exists in BaseModel before inserting
+    base_model_results = select("BaseModel", "bmid", bmid)
+    if base_model_results is None or len(base_model_results) == 0:
+        print(f"Error inserting into CustomizedModel: BaseModel with bmid={bmid} does not exist")
+        return False
     
     customized_model_columns = ('bmid','mid')
     customized_model_values = (bmid, mid)
     TABLE = "CustomizedModel"
-    if insert(TABLE, customized_model_columns, customized_model_values):
-        return True
-    else:
-        print(f"Failed to insert into {TABLE}")
+    return insert(TABLE, customized_model_columns, customized_model_values)
 
 def deleteBaseModel(**kwargs):
-    # TODO: implement this
     bmid = kwargs['bmid']
-    pass
-
+    COLUMN = 'bmid'
+    TABLE = "BaseModel"
+    return delete(TABLE, COLUMN, bmid)
+        
 def listInternetService(**kwargs):
-    # TODO: implement this
     bmid = kwargs['bmid']
-    pass
+    sql = sql = """
+        SELECT isrv.sid, isrv.provider, isrv.endpoints
+        FROM ModelServices ms
+        JOIN InternetService isrv ON ms.sid = isrv.sid
+        WHERE ms.bmid = %s
+        ORDER BY isrv.provider ASC
+    """
+    results = execute_custom_select(sql, bmid)
+    if results is False:
+        return False
+    if results is None:
+        return True
+    for row in results:
+        sid, provider, endpoints = row
+        print(f"{sid},{provider},{endpoints}")
+    return True
 
 def countCustomizedModel(**kwargs):
-    # TODO: implement this
     bmids = kwargs['bmids']
     bmid1, bmid2, bmid3 = bmids
-    pass
+    
+    sql = """
+        SELECT bm.bmid, bm.description, COUNT(cm.mid) as customizedModelCount
+        FROM BaseModel bm
+        LEFT JOIN CustomizedModel cm ON bm.bmid = cm.bmid
+        WHERE bm.bmid IN (%s, %s, %s)
+        GROUP BY bm.bmid, bm.description
+        ORDER BY bm.bmid ASC
+    """
+    results = execute_custom_select_multi(sql, (bmid1, bmid2, bmid3))
+    if results is False or len(results) == 0:
+        return False
+    
+    # Create dictionaries to store counts and descriptions for each bmid
+    counts = {bmid1: 0, bmid2: 0, bmid3: 0}
+    descriptions = {}
+    
+    # Update counts and descriptions from query results
+    for row in results:
+        bmid, description, count = row
+        counts[bmid] = count
+        descriptions[bmid] = description
+    
+    # Get descriptions for bmids that might not have any customized models
+    for bmid in [bmid1, bmid2, bmid3]:
+        if bmid not in descriptions:
+            base_model_results = select("BaseModel", "bmid", bmid)
+            if base_model_results and len(base_model_results) > 0:
+                descriptions[bmid] = base_model_results[0][2]  # description is the 3rd column (index 2)
+            else:
+                descriptions[bmid] = ""
+    
+    # Print header    
+    # Print results in ascending order of bmid
+    for bmid in sorted(counts.keys()):
+        description = descriptions.get(bmid, "")
+        print(f"{bmid},{description},{counts[bmid]}")
+    
+    return True
 
 def topNDurationConfig(**kwargs):
-    # TODO: implement this
     uid = kwargs['uid']
     N = kwargs['N']
-    pass
+    
+    # Extract values if they're lists (argparse sometimes wraps single values)
+    if isinstance(uid, list):
+        uid = uid[0]
+    if isinstance(N, list):
+        N = N[0]
+    
+    # Ensure they're integers
+    uid = int(uid)
+    N = int(N)
+    
+    sql = """
+        SELECT mc.bmid, mc.mid, mc.cid, mc.duration
+        FROM ModelConfigurations mc
+        JOIN CustomizedModel cm ON mc.bmid = cm.bmid AND mc.mid = cm.mid
+        JOIN BaseModel bm ON cm.bmid = bm.bmid
+        WHERE bm.creator_uid = %s
+        ORDER BY mc.duration DESC
+        LIMIT %s
+    """
+    results = execute_custom_select_multi(sql, (uid, N))
+    if results is False:
+        return False
+    if not results:
+        return True
+    for row in results:
+        bmid, mid, cid, duration = row
+        print(f"{bmid},{mid},{cid},{duration}")
+    return True
 
 def listBaseModelKeyWord(**kwargs):
     # TODO: implement this
@@ -183,4 +248,11 @@ COMMANDS = {
     "topNDurationConfig" : topNDurationConfig,
     "listBaseModelKeyWord" : listBaseModelKeyWord,
     "printNL2SQLresult" : printNL2SQLresult,
+}
+
+COMMAND_BOOLS = {
+    "import",
+    "insertAgentClient",
+    "addCustomizedModel",
+    "deleteBaseModel",
 }

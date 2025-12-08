@@ -12,7 +12,11 @@ def config() -> ArgumentParser:
     for name, description in COMMAND_DESCRIPTIONS.items():
         current = subparsers.add_parser(name=name, description=description)
         for arg in COMMAND_ARGS[name]:
-            current.add_argument(arg.name, type=arg.type, help=arg.help)
+            if arg.nargs > 1:
+                current.add_argument(arg.name, type=arg.type, help=arg.help, nargs=arg.nargs)
+            else:
+                current.add_argument(arg.name, type=arg.type, help=arg.help)
+                
 
 def get_args():
     config()

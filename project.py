@@ -4,16 +4,15 @@
 #       you can find it in the doc
 import sys                              # important for parsing arguments
 from args import get_args
-from commands import COMMANDS
+from commands import COMMANDS, COMMAND_BOOLS
 
     
 if __name__ == "__main__":
     args = get_args()
     if args["command"] in COMMANDS:
         result = COMMANDS[args["command"]](**args)
-        if result:
-            print("Success")
-        else:
-            print("Fail")
-    else:
-        raise Exception(f"Unknown command {args.command}")
+        if args["command"] in COMMAND_BOOLS:
+            if result:
+                print("Success")
+            else:
+                print("Fail")

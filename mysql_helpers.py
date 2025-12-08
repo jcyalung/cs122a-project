@@ -20,7 +20,22 @@ def insert(table_name : str, columns : tuple[str], values : tuple[str]) -> bool:
     except Exception as e:
         print(f"Error inserting into {table_name}: {e}")
         return False
-    
+
+def delete(table_name : str, column : str, value) -> bool:
+    cursor = DB.cursor()
+    try:
+        check_sql = f"SELECT 1 FROM `{table_name}` WHERE {column} = %s LIMIT 1"
+        cursor.execute(check_sql, (value,))
+        if cursor.fetchone() is None:
+            raise Exception(f"Record with {column} = {value} does not exist in {table_name}")
+        sql = f"DELETE FROM `{table_name}` WHERE {column} = %s"
+        cursor.execute(sql, (value,))
+        DB.commit()
+        return True
+    except Exception as e:
+        print(f"Error deleting from table {table_name}: {e}")
+        return False
+        
 
 # drop the table if exists
 def drop(table_name : str) -> bool:
@@ -45,3 +60,39 @@ def create_table(table_name : str, table_def) -> bool:
         return True
     except Exception as e:
         print(f"Error creating table {table_name}: {e}")
+        
+def select(table_name: str, column: str, value):
+    cursor = DB.cursor()
+    try:
+        sql = f"SELECT * FROM `{table_name}` WHERE {column} = %s"
+        cursor.execute(sql, (value,))
+        results = cursor.fetchall()
+        return results
+    except Exception as e:
+        print(f"Error selecting from table {table_name}: {e}")
+        return None
+
+def execute_custom_select(sql : str, value : str=None):
+    cursor = DB.cursor()
+    try:
+        result = None
+        if value:
+            cursor.execute(sql, (value,))
+        else:
+            cursor.execute(sql)
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error selecting: {e}")
+        return False
+
+def execute_custom_select_multi(sql : str, values : tuple=None):
+    cursor = DB.cursor()
+    try:
+        if values:
+            cursor.execute(sql, values)
+        else:
+            cursor.execute(sql)
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error selecting: {e}")
+        return False
