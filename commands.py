@@ -157,10 +157,26 @@ def countCustomizedModel(**kwargs):
         return False
 
 def topNDurationConfig(**kwargs):
-    # TODO: implement this
     uid = kwargs['uid']
     N = kwargs['N']
-    pass
+    
+    query = f"""
+        SELECT uid, cid, label, content, duration
+        FROM Configuration
+        WHERE uid = {uid}
+        ORDER BY duration DESC
+        LIMIT {N};
+    """
+    
+    result = execute_query(query)
+    if result:
+        print("uid, cid, label, content, duration")
+        for row in result:
+            print(f"{row['uid']}, {row['cid']}, {row['label']}, {row['content']}, {row['duration']}")
+        return True
+    else:
+        print(f"Error retrieving top {N} configurations for uid {uid}")
+        return False
 
 def listBaseModelKeyWord(**kwargs):
     # TODO: implement this
