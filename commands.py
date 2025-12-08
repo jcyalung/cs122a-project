@@ -125,6 +125,7 @@ def listInternetService(**kwargs):
         WHERE bmid = {bmid}
         ORDER BY provider ASC;
     """
+    
     result = execute_query(query)
     if result:
         print("sid, endpoint, provider")
