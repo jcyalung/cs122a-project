@@ -45,3 +45,24 @@ def create_table(table_name : str, table_def) -> bool:
         return True
     except Exception as e:
         print(f"Error creating table {table_name}: {e}")
+
+def execute_query(query: str):
+    cursor = DB.cursor(dictionary=True)
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except mysql.connector.Error as err:
+        print(f"Error executing query: {err}")
+        return None
+
+def delete(table_name: str, column: str, value) -> bool:
+    cursor = DB.cursor()
+    try:
+        sql = f"DELETE FROM {table_name} WHERE {column} = %s"
+        cursor.execute(sql, (value,))
+        DB.commit()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error deleting from {table_name}: {err}")
+        return False

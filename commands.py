@@ -118,9 +118,22 @@ def deleteBaseModel(**kwargs):
 
 
 def listInternetService(**kwargs):
-    # TODO: implement this
     bmid = kwargs['bmid']
-    pass
+    query = f"""
+        SELECT sid, endpoint, provider
+        FROM InternetService
+        WHERE bmid = {bmid}
+        ORDER BY provider ASC;
+    """
+    result = execute_query(query)
+    if result:
+        print("sid, endpoint, provider")
+        for row in result:
+            print(f"{row['sid']}, {row['endpoint']}, {row['provider']}")
+        return True
+    else:
+        print(f"Error retrieving internet services for bmid {bmid}")
+        return False
 
 def countCustomizedModel(**kwargs):
     # TODO: implement this
