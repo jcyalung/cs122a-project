@@ -179,9 +179,26 @@ def topNDurationConfig(**kwargs):
         return False
 
 def listBaseModelKeyWord(**kwargs):
-    # TODO: implement this
     keyword = kwargs['keyword']
-    pass
+    
+    query = f"""
+        SELECT bmid, sid, provider, domain
+        FROM BaseModel
+        WHERE domain LIKE %s
+        ORDER BY bmid ASC
+        LIMIT 5;
+    """
+    
+    result = execute_query(query, (f"%{keyword}%",))
+    
+    if result:
+        print("bmid, sid, provider, domain")
+        for row in result:
+            print(f"{row['bmid']}, {row['sid']}, {row['provider']}, {row['domain']}")
+        return True
+    else:
+        print(f"No base models found with keyword {keyword}")
+        return False
 
 def printNL2SQLresult(**kwargs):
     filename = "NL2SQL_results.csv"
