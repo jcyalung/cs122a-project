@@ -137,10 +137,24 @@ def listInternetService(**kwargs):
         return False
 
 def countCustomizedModel(**kwargs):
-    # TODO: implement this
     bmids = kwargs['bmids']
-    bmid1, bmid2, bmid3 = bmids
-    pass
+    query = f"""
+        SELECT bmid, description, COUNT(mid) AS customizedModelCount
+        FROM CustomizedModel
+        WHERE bmid IN ({', '.join(map(str, bmids))})
+        GROUP BY bmid, description
+        ORDER BY bmid ASC;
+    """
+    
+    result = execute_query(query)
+    if result:
+        print("bmid, description, customizedModelCount")
+        for row in result:
+            print(f"{row['bmid']}, {row['description']}, {row['customizedModelCount']}")
+        return True
+    else:
+        print(f"Error counting customized models for bmids {bmids}")
+        return False
 
 def topNDurationConfig(**kwargs):
     # TODO: implement this
