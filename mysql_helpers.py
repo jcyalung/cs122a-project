@@ -46,10 +46,10 @@ def create_table(table_name : str, table_def) -> bool:
     except Exception as e:
         print(f"Error creating table {table_name}: {e}")
 
-def execute_query(query: str):
+def execute_query(query, params=None):
     cursor = DB.cursor(dictionary=True)
     try:
-        cursor.execute(query)
+        cursor.execute(query, params if params else ())
         result = cursor.fetchall()
         return result
     except mysql.connector.Error as err:
