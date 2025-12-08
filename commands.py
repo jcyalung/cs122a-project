@@ -90,7 +90,6 @@ def insertAgentClient(**kwargs):
         return False
 
 def addCustomizedModel(**kwargs):
-    # TODO: implement this
     mid = kwargs['mid']
     bmid = kwargs['bmid']
     
@@ -105,7 +104,18 @@ def addCustomizedModel(**kwargs):
 def deleteBaseModel(**kwargs):
     # TODO: implement this
     bmid = kwargs['bmid']
-    pass
+    
+    if not delete("CustomizedModel", "bmid", bmid):
+        print(f"Error deleting related entries in CustomizedModel for bmid {bmid}")
+        return False
+    
+    if delete("BaseModel", "bmid", bmid):
+        print(f"Successfully deleted base model {bmid}")
+        return True
+    else:
+        print(f"Failed to delete base model {bmid}")
+        return False
+
 
 def listInternetService(**kwargs):
     # TODO: implement this
