@@ -10,7 +10,6 @@ from constants import COMMAND_ARGS
     
 if __name__ == "__main__":
     args = get_args()
-    print(args)
     if args["command"] in COMMANDS:
         # Filter args to only include arguments defined for this command
         command_name = args["command"]
