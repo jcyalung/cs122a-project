@@ -195,11 +195,12 @@ def listBaseModelKeyWord(**kwargs):
     keyword = kwargs['keyword']
     
     sql = """
-        SELECT DISTINCT bm.bmid
+        SELECT DISTINCT bm.bmid, isrv.sid, isrv.provider, llm.domain
         FROM BaseModel bm
         JOIN ModelServices ms ON bm.bmid = ms.bmid
         JOIN LLMService llm ON ms.sid = llm.sid
-        WHERE llm.domain IS NOT NULL AND llm.domain LIKE %s
+        JOIN InternetService isrv ON llm.sid = isrv.sid
+        WHERE llm.domain IS NOT NULL AND LOWER(llm.domain) LIKE LOWER(%s)
         ORDER BY bm.bmid ASC
         LIMIT 5
     """
@@ -210,8 +211,8 @@ def listBaseModelKeyWord(**kwargs):
     if results is None or len(results) == 0:
         return True
     for row in results:
-        bmid = row[0]
-        print(f"{bmid}")
+        bmid, sid, provider, domain = row
+        print(f"{bmid},{sid},{provider},{domain}")
     return True
 
 def printNL2SQLresult(**kwargs):
