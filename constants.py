@@ -66,7 +66,7 @@ COMMAND_ARGS = {
         Argument('bmid', int, 'bmid of model to list'),
     ],
     "countCustomizedModel"  : [
-        Argument('bmids', int, 'list of bmids (3 required)', nargs=3),
+        Argument('bmids', int, 'list of bmids (>=1)', nargs='+'),
     ],
     "topNDurationConfig"    : [
         Argument('uid', int, 'uid of agent client'),

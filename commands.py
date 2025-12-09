@@ -113,21 +113,28 @@ def listInternetService(**kwargs):
 
 def countCustomizedModel(**kwargs):
     bmids = kwargs['bmids']
-    bmid1, bmid2, bmid3 = bmids
+    # Ensure bmids is a list (argparse with nargs='+' returns a list)
+    if not isinstance(bmids, list):
+        bmids = [bmids]
     
-    sql = """
+    if len(bmids) == 0:
+        return False
+    
+    # Build SQL query with dynamic number of placeholders
+    placeholders = ', '.join(['%s'] * len(bmids))
+    sql = f"""
         SELECT bm.bmid, bm.description, COUNT(cm.mid) as customizedModelCount
         FROM BaseModel bm
         LEFT JOIN CustomizedModel cm ON bm.bmid = cm.bmid
-        WHERE bm.bmid IN (%s, %s, %s)
+        WHERE bm.bmid IN ({placeholders})
         GROUP BY bm.bmid, bm.description
         ORDER BY bm.bmid ASC
     """
-    results = execute_custom_select_multi(sql, (bmid1, bmid2, bmid3))
-    if results is False or len(results) == 0:
+    results = execute_custom_select_multi(sql, tuple(bmids))
+    if results is False:
         return False
     
-    counts = {bmid1: 0, bmid2: 0, bmid3: 0}
+    counts = {bmid: 0 for bmid in bmids}
     descriptions = {}
     
     for row in results:
@@ -135,7 +142,7 @@ def countCustomizedModel(**kwargs):
         counts[bmid] = count
         descriptions[bmid] = description
     
-    for bmid in [bmid1, bmid2, bmid3]:
+    for bmid in bmids:
         if bmid not in descriptions:
             base_model_results = select("BaseModel", "bmid", bmid)
             if base_model_results and len(base_model_results) > 0:
