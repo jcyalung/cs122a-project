@@ -18,7 +18,7 @@ def insert(table_name : str, columns : tuple[str], values : tuple[str]) -> bool:
         DB.commit()
         return True
     except Exception as e:
-        print(f"Error inserting into {table_name}: {e}")
+        # print(f"Error inserting into {table_name}: {e}")
         return False
 
 def delete(table_name : str, column : str, value) -> bool:
@@ -33,7 +33,7 @@ def delete(table_name : str, column : str, value) -> bool:
         DB.commit()
         return True
     except Exception as e:
-        print(f"Error deleting from table {table_name}: {e}")
+        # print(f"Error deleting from table {table_name}: {e}")
         return False
         
 
