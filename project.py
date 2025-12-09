@@ -26,8 +26,6 @@ if __name__ == "__main__":
 
 
 """
-test_insertClientSuccess
-Test Failed: ('Incorrect Results: ', "['project.py', 'insertAgentClient', '12', 'user_izbxo', 'user_izbxo@example.com', '54321', 'izbxo', '2028-10-15', '321', '92517', 'Games;NLP']\nFail\n")
 
 test_keywordSearch
 Test Failed: ('Incorrect Results: ', "['project.py', 'listBaseModelKeyWord', 'video']\n8\n17\n19\n")

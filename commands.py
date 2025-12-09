@@ -174,11 +174,10 @@ def topNDurationConfig(**kwargs):
     N = int(N)
     
     sql = """
-        SELECT mc.bmid, mc.mid, mc.cid, mc.duration
+        SELECT c.client_uid, c.cid, c.labels, c.content, mc.duration
         FROM ModelConfigurations mc
-        JOIN CustomizedModel cm ON mc.bmid = cm.bmid AND mc.mid = cm.mid
-        JOIN BaseModel bm ON cm.bmid = bm.bmid
-        WHERE bm.creator_uid = %s
+        JOIN Configuration c ON mc.cid = c.cid
+        WHERE c.client_uid = %s
         ORDER BY mc.duration DESC
         LIMIT %s
     """
@@ -188,8 +187,8 @@ def topNDurationConfig(**kwargs):
     if results is None or len(results) == 0:
         return True
     for row in results:
-        bmid, mid, cid, duration = row
-        print(f"{bmid},{mid},{cid},{duration}")
+        client_uid, cid, labels, content, duration = row
+        print(f"{client_uid},{cid},{labels},{content},{duration}")
     return True
 
 def listBaseModelKeyWord(**kwargs):
