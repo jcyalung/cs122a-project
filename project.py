@@ -9,6 +9,7 @@ from commands import COMMANDS, COMMAND_BOOLS
     
 if __name__ == "__main__":
     args = get_args()
+    print(args)
     if args["command"] in COMMANDS:
         result = COMMANDS[args["command"]](**args)
         if args["command"] in COMMAND_BOOLS:
