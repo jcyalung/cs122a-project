@@ -100,7 +100,7 @@ def deleteBaseModel(**kwargs):
 def listInternetService(**kwargs):
     bmid = kwargs['bmid']
     sql = """
-        SELECT isrv.sid, isrv.provider, isrv.endpoints
+        SELECT isrv.sid, isrv.endpoints, isrv.provider
         FROM ModelServices ms
         JOIN InternetService isrv ON ms.sid = isrv.sid
         WHERE ms.bmid = %s
@@ -112,8 +112,8 @@ def listInternetService(**kwargs):
     if results is None or len(results) == 0:
         return True
     for row in results:
-        sid, provider, endpoints = row
-        print(f"{sid},{provider},{endpoints}")
+        sid, endpoint, provider = row
+        print(f"{sid},{endpoint},{provider}")
     return True
 
 def countCustomizedModel(**kwargs):
