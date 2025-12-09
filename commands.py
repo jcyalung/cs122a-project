@@ -78,7 +78,7 @@ def addCustomizedModel(**kwargs):
     
     base_model_results = select("BaseModel", "bmid", bmid)
     if base_model_results is None or len(base_model_results) == 0:
-        print(f"Error inserting into CustomizedModel: BaseModel with bmid={bmid} does not exist")
+        # print(f"Error inserting into CustomizedModel: BaseModel with bmid={bmid} does not exist")
         return False
     
     customized_model_columns = ('bmid','mid')
@@ -103,6 +103,7 @@ def listInternetService(**kwargs):
     """
     results = execute_custom_select(sql, bmid)
     if results is False or results is None or len(results) == 0:
+        print("Fail")
         return False
     for row in results:
         sid, provider, endpoints = row
@@ -268,5 +269,4 @@ COMMAND_BOOLS = {
     "insertAgentClient",
     "addCustomizedModel",
     "deleteBaseModel",
-    "listInternetService",
 }

@@ -69,7 +69,7 @@ def select(table_name: str, column: str, value):
         results = cursor.fetchall()
         return results
     except Exception as e:
-        print(f"Error selecting from table {table_name}: {e}")
+        # print(f"Error selecting from table {table_name}: {e}")
         return None
 
 def execute_custom_select(sql : str, value : str=None):
@@ -82,7 +82,7 @@ def execute_custom_select(sql : str, value : str=None):
             cursor.execute(sql)
         return cursor.fetchall()
     except Exception as e:
-        print(f"Error selecting: {e}")
+        # print(f"Error selecting: {e}")
         return False
 
 def execute_custom_select_multi(sql : str, values : tuple=None):
@@ -94,5 +94,5 @@ def execute_custom_select_multi(sql : str, values : tuple=None):
             cursor.execute(sql)
         return cursor.fetchall()
     except Exception as e:
-        print(f"Error selecting: {e}")
+        # print(f"Error selecting: {e}")
         return False
