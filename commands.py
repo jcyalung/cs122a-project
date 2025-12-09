@@ -102,10 +102,8 @@ def listInternetService(**kwargs):
         ORDER BY isrv.provider ASC
     """
     results = execute_custom_select(sql, bmid)
-    if results is False:
+    if results is False or results is None or len(results) == 0:
         return False
-    if results is None:
-        return True
     for row in results:
         sid, provider, endpoints = row
         print(f"{sid},{provider},{endpoints}")
@@ -270,4 +268,5 @@ COMMAND_BOOLS = {
     "insertAgentClient",
     "addCustomizedModel",
     "deleteBaseModel",
+    "listInternetService",
 }
