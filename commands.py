@@ -62,7 +62,6 @@ def insertAgentClient(**kwargs):
     zip = kwargs['zip']
     interests = kwargs['interests']
     TABLE = "AgentClient"
-    # insert into user table (for foreign key)
     user_columns = ('uid', 'email', 'username')
     user_values = (uid, email, username)
     if not insert("User", user_columns, user_values):
@@ -77,7 +76,6 @@ def addCustomizedModel(**kwargs):
     mid = kwargs['mid']
     bmid = kwargs['bmid']
     
-    # Check if bmid exists in BaseModel before inserting
     base_model_results = select("BaseModel", "bmid", bmid)
     if base_model_results is None or len(base_model_results) == 0:
         print(f"Error inserting into CustomizedModel: BaseModel with bmid={bmid} does not exist")
@@ -129,27 +127,22 @@ def countCustomizedModel(**kwargs):
     if results is False or len(results) == 0:
         return False
     
-    # Create dictionaries to store counts and descriptions for each bmid
     counts = {bmid1: 0, bmid2: 0, bmid3: 0}
     descriptions = {}
     
-    # Update counts and descriptions from query results
     for row in results:
         bmid, description, count = row
         counts[bmid] = count
         descriptions[bmid] = description
     
-    # Get descriptions for bmids that might not have any customized models
     for bmid in [bmid1, bmid2, bmid3]:
         if bmid not in descriptions:
             base_model_results = select("BaseModel", "bmid", bmid)
             if base_model_results and len(base_model_results) > 0:
-                descriptions[bmid] = base_model_results[0][2]  # description is the 3rd column (index 2)
+                descriptions[bmid] = base_model_results[0][2]
             else:
                 descriptions[bmid] = ""
     
-    # Print header    
-    # Print results in ascending order of bmid
     for bmid in sorted(counts.keys()):
         description = descriptions.get(bmid, "")
         print(f"{bmid},{description},{counts[bmid]}")
@@ -160,13 +153,11 @@ def topNDurationConfig(**kwargs):
     uid = kwargs['uid']
     N = kwargs['N']
     
-    # Extract values if they're lists (argparse sometimes wraps single values)
     if isinstance(uid, list):
         uid = uid[0]
     if isinstance(N, list):
         N = N[0]
     
-    # Ensure they're integers
     uid = int(uid)
     N = int(N)
     
@@ -190,13 +181,30 @@ def topNDurationConfig(**kwargs):
     return True
 
 def listBaseModelKeyWord(**kwargs):
-    # TODO: implement this
     keyword = kwargs['keyword']
-    pass
+    
+    sql = """
+        SELECT DISTINCT bm.bmid
+        FROM BaseModel bm
+        JOIN ModelServices ms ON bm.bmid = ms.bmid
+        JOIN LLMService llm ON ms.sid = llm.sid
+        WHERE llm.domain LIKE %s
+        ORDER BY bm.bmid ASC
+        LIMIT 5
+    """
+    keyword_pattern = f"%{keyword}%"
+    results = execute_custom_select(sql, keyword_pattern)
+    if results is False:
+        return False
+    if results is None:
+        return True
+    for row in results:
+        bmid = row[0]
+        print(f"{bmid}")
+    return True
 
 def printNL2SQLresult(**kwargs):
     filename = "NL2SQL_results.csv"
-    # Define the order and names of the columns as in the problem description
     header_fields = [
         "NLquery_id",
         "NLquery",
