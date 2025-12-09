@@ -9,7 +9,6 @@ from constants import COMMAND_ARGS
 
     
 if __name__ == "__main__":
-    print(sys.argv)
     args = get_args()
     if args["command"] in COMMANDS:
         # Filter args to only include arguments defined for this command
@@ -24,3 +23,22 @@ if __name__ == "__main__":
                 print("Success")
             else:
                 print("Fail")
+
+
+"""
+test_insertClientSuccess
+Test Failed: ('Incorrect Results: ', "['project.py', 'insertAgentClient', '12', 'user_izbxo', 'user_izbxo@example.com', '54321', 'izbxo', '2028-10-15', '321', '92517', 'Games;NLP']\nFail\n")
+
+test_keywordSearch
+Test Failed: ('Incorrect Results: ', "['project.py', 'listBaseModelKeyWord', 'video']\n8\n17\n19\n")
+
+test_listService
+Test Failed: ('Incorrect Results: ', "['project.py', 'listInternetService', '17']\n9,Google,https://google2.example.com/v1;https://google3.example.com/v1\n3,OpenAI,https://openai1.example.com/v1\n")
+
+test_topConfig1
+Test Failed: ('Incorrect Results: ', "['project.py', 'topNDurationConfig', '20', '2']\n")
+
+test_topConfig2
+Test Failed: ('Incorrect Results: ', "['project.py', 'topNDurationConfig', '10', '3']\n")
+
+"""

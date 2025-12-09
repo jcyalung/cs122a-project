@@ -62,10 +62,15 @@ def insertAgentClient(**kwargs):
     zip = kwargs['zip']
     interests = kwargs['interests']
     TABLE = "AgentClient"
-    user_columns = ('uid', 'email', 'username')
-    user_values = (uid, email, username)
-    if not insert("User", user_columns, user_values):
-        return False
+    
+    # Check if user already exists
+    existing_user = select("User", "uid", uid)
+    if existing_user is None or len(existing_user) == 0:
+        # User doesn't exist, insert it
+        user_columns = ('uid', 'email', 'username')
+        user_values = (uid, email, username)
+        if not insert("User", user_columns, user_values):
+            return False
     
     agent_client_columns = ('uid', 'interests', 'cardholder', 'expire', 'cardno', 'cvv', 'zip')
     agent_client_values = (uid, interests, card_holder, expiration_date, card_number, cvv, zip)
@@ -94,7 +99,7 @@ def deleteBaseModel(**kwargs):
         
 def listInternetService(**kwargs):
     bmid = kwargs['bmid']
-    sql = sql = """
+    sql = """
         SELECT isrv.sid, isrv.provider, isrv.endpoints
         FROM ModelServices ms
         JOIN InternetService isrv ON ms.sid = isrv.sid
@@ -102,9 +107,10 @@ def listInternetService(**kwargs):
         ORDER BY isrv.provider ASC
     """
     results = execute_custom_select(sql, bmid)
-    if results is False or results is None or len(results) == 0:
-        print("Fail")
+    if results is False:
         return False
+    if results is None or len(results) == 0:
+        return True
     for row in results:
         sid, provider, endpoints = row
         print(f"{sid},{provider},{endpoints}")
@@ -179,7 +185,7 @@ def topNDurationConfig(**kwargs):
     results = execute_custom_select_multi(sql, (uid, N))
     if results is False:
         return False
-    if not results:
+    if results is None or len(results) == 0:
         return True
     for row in results:
         bmid, mid, cid, duration = row
@@ -194,18 +200,16 @@ def listBaseModelKeyWord(**kwargs):
         FROM BaseModel bm
         JOIN ModelServices ms ON bm.bmid = ms.bmid
         JOIN LLMService llm ON ms.sid = llm.sid
-        WHERE llm.domain IS NOT NULL AND LOWER(llm.domain) LIKE LOWER(%s)
+        WHERE llm.domain IS NOT NULL AND llm.domain LIKE %s
         ORDER BY bm.bmid ASC
         LIMIT 5
     """
     keyword_pattern = f"%{keyword}%"
     results = execute_custom_select(sql, keyword_pattern)
     if results is False:
-        print("Fail")
         return False
     if results is None or len(results) == 0:
-        print("Fail")
-        return False
+        return True
     for row in results:
         bmid = row[0]
         print(f"{bmid}")
