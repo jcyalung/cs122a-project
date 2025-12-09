@@ -194,16 +194,18 @@ def listBaseModelKeyWord(**kwargs):
         FROM BaseModel bm
         JOIN ModelServices ms ON bm.bmid = ms.bmid
         JOIN LLMService llm ON ms.sid = llm.sid
-        WHERE llm.domain LIKE %s
+        WHERE llm.domain IS NOT NULL AND LOWER(llm.domain) LIKE LOWER(%s)
         ORDER BY bm.bmid ASC
         LIMIT 5
     """
     keyword_pattern = f"%{keyword}%"
     results = execute_custom_select(sql, keyword_pattern)
     if results is False:
+        print("Fail")
         return False
-    if results is None:
-        return True
+    if results is None or len(results) == 0:
+        print("Fail")
+        return False
     for row in results:
         bmid = row[0]
         print(f"{bmid}")
