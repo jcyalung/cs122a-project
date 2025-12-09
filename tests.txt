@@ -1,0 +1,9 @@
+Error inserting into AgentClient: 1264 (22003): 
+Out of range value for column \'cardno\' at row 1
+\nTraceback (most recent call last):\n  
+File "/autograder/source/src/project.py", line 14, in <module>\n    
+result = COMMANDS[args["command"]](**args)\n  
+File "/autograder/source/src/commands.py", line 45, in importFromFolder\n    
+raise Exception(f"Error inserting row into table {table_name}: {row}")
+\nException: Error inserting row into table AgentClient: 
+[\'3\', \'Tools\', \'User 3\', \'2028-01-02\', \'3807691902964454\', \'508\', \'98039\']\n')
