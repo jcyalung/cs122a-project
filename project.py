@@ -11,7 +11,6 @@ from constants import COMMAND_ARGS
 if __name__ == "__main__":
     args = get_args()
     if args["command"] in COMMANDS:
-        # Filter args to only include arguments defined for this command
         command_name = args["command"]
         filtered_args = {}
         for arg_def in COMMAND_ARGS[command_name]:

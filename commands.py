@@ -118,14 +118,12 @@ def listInternetService(**kwargs):
 
 def countCustomizedModel(**kwargs):
     bmids = kwargs['bmids']
-    # Ensure bmids is a list (argparse with nargs='+' returns a list)
     if not isinstance(bmids, list):
         bmids = [bmids]
     
     if len(bmids) == 0:
         return False
     
-    # Build SQL query with dynamic number of placeholders
     placeholders = ', '.join(['%s'] * len(bmids))
     sql = f"""
         SELECT bm.bmid, bm.description, COUNT(cm.mid) as customizedModelCount
