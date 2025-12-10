@@ -176,7 +176,7 @@ def topNDurationConfig(**kwargs):
         FROM ModelConfigurations mc
         JOIN Configuration c ON mc.cid = c.cid
         WHERE c.client_uid = %s
-        ORDER BY mc.duration DESC, mc.bmid ASC, c.cid ASC, mc.mid ASC
+        ORDER BY mc.duration DESC, mc.mid ASC, c.cid ASC, mc.bmid ASC
         LIMIT %s
     """
     results = execute_custom_select_multi(sql, (uid, N))
