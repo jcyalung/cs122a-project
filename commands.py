@@ -172,11 +172,12 @@ def topNDurationConfig(**kwargs):
     N = int(N)
     
     sql = """
-        SELECT c.client_uid, c.cid, c.labels, c.content, mc.duration
+        SELECT c.client_uid, c.cid, c.labels, c.content, MAX(mc.duration) AS MaxDuration
         FROM ModelConfigurations mc
         JOIN Configuration c ON mc.cid = c.cid
         WHERE c.client_uid = %s
-        ORDER BY mc.duration DESC, c.cid ASC, mc.bmid ASC, mc.mid DESC
+        GROUP BY c.cid
+        ORDER BY MaxDuration DESC, c.cid ASC 
         LIMIT %s
     """
     results = execute_custom_select_multi(sql, (uid, N))
